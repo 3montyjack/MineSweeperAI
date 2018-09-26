@@ -102,7 +102,7 @@ function makeEasyMove() {
       var data = [];
       //Check the 8 surrounding Tiles
       if (aiBoard[i][j][0] === unknown) {
-        data = checkSurroundingCells(i, j);
+        data = surround.checkSurroundingCells(i, j);
         console.log(data, i, j)
         console.log(aiBoard)
         if (data[0] > 0) {
@@ -122,65 +122,8 @@ function makeEasyMove() {
   return easyMoveFlag;
 }
 
+
 //// NOTE: HardMoves
-
-function findProbiblity(x, y) {
-  var board = [];
-  var tempProbs = 0;
-  for (var i = -1; i < 2; i++) {
-    for (var j = -1; j < 2; j++) {
-      if (
-        i + x < board.length &&
-        j + y < board[0].length &&
-        i + x >= 0 &&
-        j + y >= 0
-      ) {
-        if (board[x + i][y + j][0] === 0) {
-          board[x][y][1] = true;
-        } else {
-          board[x + i][y + j][1] = true;
-        }
-      }
-    }
-  }
-  return tempProbs;
-}
-
-
-
-function checkSurroundingCells(x, y) {
-  var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-  for (var k = -1; k < 2; k++) {
-    for (var l = -1; l < 2; l++) {
-      if (
-        k + x < aiBoard.length &&
-        l + y < aiBoard[0].length &&
-        k + x >= 0 &&
-        l + y >= 0
-      ) {
-        console.log("Checking ", x + k, y + l, aiBoard[x + k][y + l][0])
-        if (!(l === 0 && k === 0)) {
-          var checking = aiBoard[x + k][y + l][0];
-          if (checking === unknown) {
-            if (aiBoard[x + k][y + l][2]) {
-              data[bombL]++;
-            } else {
-              data[missing]++;
-            }
-          } else {
-            console.log("Loading To Data", checking)
-            var location = checking;
-            data[location] = data[location] + 1;
-          }
-        }
-      } else {
-        data[walls]++;
-      }
-    }
-  }
-  return data;
-}
 
 function addOneToBombsAround(x, y) {
   for (var k = -1; k < 2; k++) {
@@ -201,36 +144,20 @@ function addOneToBombsAround(x, y) {
 //Check each of the diagonals for a 1 that is surrounded by all 0's
 //Arguments x,y of the checked tile and boolean of weather its in positive x or pos y
 //True is positive false is not
-function checkOneDiagonalyCorner(x, y, extx, exty) {
-  var changeX = extx ? 1 : -1;
-  var changeY = exty ? 1 : -1;
-  if (
-    changeX + x < aiBoard.length &&
-    changeY + y < aiBoard[0].length &&
-    changeX + x >= 0 &&
-    changeY + y >= 0
-  ) {
-    if (aiBoard[changeX + x][changeY + y][0] > 0 && aiBoard[changeX + x][y][0] > 0 && aiBoard[x][changeY + y][0] > 0) {
-      console.log("Checking Cells", changeX + x, changeY + y)
 
-      if (checkSurroundingCells(changeX + x, changeY + y)[0] === 5) {
-        console.log("Found Bomb: ", x, y)
-        return true;
-      }
-    }
-  }
-  return false;
-}
 
 function confirmBombInTile(x, y) {
-  //var data = checkSurroundingCells(x, y);
+  //var data = surround.checkSurroundingCells(x, y);
+  flag = true;
   if (!aiBoard[x][y][2]) {
-    if (
-      checkOneDiagonalyCorner(x + 1, y - 1, true, false) ||
-      checkOneDiagonalyCorner(x - 1, y - 1, false, false) ||
-      checkOneDiagonalyCorner(x + 1, y + 1, true, true) ||
-      checkOneDiagonalyCorner(x - 1, y + 1, false, true)
-    ) {
+    for (var Dx = -1; Dx <= 1; Dx++) {
+      for (var Dy = 1; Dy <= 1; Dy++) {
+          if (!surround.checkOneDiagonalyCorner(x, y, Dx, Dy)) {
+            flag = false;
+          }
+      }
+    }
+    if (flag) {
       console.log("Found Bomb");
       foundBomb = true;
       aiBoard[x][y][2] = true;
