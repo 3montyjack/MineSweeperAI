@@ -1,8 +1,11 @@
 var click = require("./../GameLogic/GameClick.js");
-var surround = require("./CheckSurrounding.js")
+var surround = require("./CheckSurrounding.js");
+var constants = require("./ConstantsForAI.js")
 
 //Each Cell Looks like this [number,probibility, bomb, foundBombAround]
 var aiBoard = [];
+
+var constantMap = new Map();
 
 const probibility = -1;
 const figuredOut = -2;
@@ -18,10 +21,26 @@ var foundBomb = false;
 var walls = 9;
 var missing = 10;
 var bombL = 11;
+var bombShifted = 12;
 
-this.initialize = function(gameBoardV, numberOfBombs) {
+function softInitialize(gameBoardV) {
+  //TODO Make a better way to pass variables between all of the other stuff
+  console.log("ReInitalizing Map")
   actualBoard = gameBoardV;
   makeAIBoard();
+
+};
+
+function initialize() {
+  //TODO Make a better way to pass variables between all of the other stuff
+  constantMap.set("unknown", unknown);
+  constantMap.set("gameBoard", actualBoard);
+  constantMap.set("aiBoard", aiBoard);
+  constantMap.set("bombL", bombL);
+  constantMap.set("unknown", unknown);
+  constantMap.set("missing", missing);
+  constantMap.set("numberOfBombs", numberOfBombs)
+
 };
 
 function makeAIBoard() {
@@ -46,9 +65,9 @@ function firstMove() {
   console.log("First Move");
 }
 
-this.makeMove = function(tempBoard, aiBoardI, clicked) {
+function makeMove(tempBoard, aiBoardI, clicked) {
   if (aiBoardI === null || clicked) {
-    this.initialize(tempBoard);
+    softInitialize(tempBoard);
   } else {
     aiBoard = aiBoardI;
     actualBoard = tempBoard;
@@ -75,15 +94,14 @@ this.makeMove = function(tempBoard, aiBoardI, clicked) {
   if (!temp[1] && !temp[2]) {
     actualBoard = temp[0];
     if (temp[3]) {
-      console.log("ReInitalizing Map")
-      this.initialize(temp[0]);
+
+      softInitialize(temp[0]);
     } else {
       aiBoard[cords[0]][cords[1]][0] = temp[0][cords[0]][cords[1]][0];
     }
   }
   //Append to the back of the temp data the ai board so we dont have to redo all of the calculations
   temp[3] = aiBoard;
-  console.log(aiBoard);
   return temp;
 };
 
@@ -104,7 +122,6 @@ function makeEasyMove() {
       if (aiBoard[i][j][0] === unknown) {
         data = surround.checkSurroundingCells(i, j);
         console.log(data, i, j)
-        console.log(aiBoard)
         if (data[0] > 0) {
           easyMoveFlag = true;
         } else {
@@ -146,9 +163,11 @@ function addOneToBombsAround(x, y) {
 //True is positive false is not
 
 
+
+
 function confirmBombInTile(x, y) {
   //var data = surround.checkSurroundingCells(x, y);
-  flag = true;
+  var flag = true;
   if (!aiBoard[x][y][2]) {
     for (var Dx = -1; Dx <= 1; Dx++) {
       for (var Dy = 1; Dy <= 1; Dy++) {
@@ -175,3 +194,51 @@ function makeProbibilityMove() {
   console.log("Making Fake Harder Move")
   return [x, y];
 }
+
+module.exports = {
+  constantMap, makeMove, initialize
+}
+
+//New algorythim
+
+function click0s() {
+  //for each tile in the program go and click it if the bombshifted ammount is 0
+}
+
+function click0sAround() {
+  //for each tile in the program go and click it if the bombshifted ammount is 0
+}
+
+function randomClick() {
+
+}
+
+
+
+
+
+
+/*Here is how the algorythim is going to work
+
+Bombshift should be its own category where its a negative on itsself.
+There should be the revealed number and then another category for the shifted ammount
+
+Check if there are no clicked tiles
+First click is random
+
+Non first Click
+
+1) First we go through and check if there are any bombs revealed
+    Restoring the actual value and also the bomb shifted value on any of the tiles
+
+2) Then we go through and see if there are any tiles that have 0 on them with the bomb shifted
+    If we do then click on the tile
+    Go back to 1
+
+3) If there are none then we go through and look for obvious bombs
+  If the number of unclicked tiles around = bombshifted number click both / all
+   If there are any go back to step 1
+
+4) Randomly Guess on one of the revealed tiles
+
+*/

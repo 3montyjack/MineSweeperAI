@@ -1,8 +1,27 @@
-this.checkForKnownBombsAround = function() {};
+
+var AI = require("./TheAI.js").constantMap;
+var constants = AI
+
+this.checkConfirmingBomb = function(x,y) {
+  var data = checkSurroundingCells(x,y);
+  //SUDO Code Temp
+  // if (data[missing] == AI Map bombshifted) {
+  //
+  //   for(var value in square) {
+  //     click on unexposed squares
+  //  }
+  //   startOver()
+  // }
+  //
+};
+
+
 
 this.checkSurroundingCells = function(x, y) {
-  var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  console.log(this.walls)
 
+  //TODO Fix This Still
+  var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   for (var k = -1; k < 2; k++) {
     for (var l = -1; l < 2; l++) {
       if (checkIfOB(x, y, k, l)) {
@@ -29,7 +48,9 @@ this.checkSurroundingCells = function(x, y) {
   return data;
 };
 
-function checkOneDiagonalyCorner(x, y, changeX, changeY) {
+this.checkOneDiagonalyCorner = function (x, y, changeX, changeY) {
+
+  //TODO Fix This Still
   if (checkIfOB(x, y, changeX, changeY)) {
     if (
       aiBoard[changeX + x][changeY + y][0] > 0 &&
@@ -38,7 +59,7 @@ function checkOneDiagonalyCorner(x, y, changeX, changeY) {
     ) {
       console.log("Checking Cells", changeX + x, changeY + y);
 
-      if (surround.checkSurroundingCells(changeX + x, changeY + y)[0] === 5) {
+      if (this.checkSurroundingCells(changeX + x, changeY + y)[0] === 5) {
         console.log("Found Bomb: ", x, y);
         return true;
       }
@@ -48,6 +69,7 @@ function checkOneDiagonalyCorner(x, y, changeX, changeY) {
 }
 
 function checkIfOB(x, y, changeX, changeY) {
+  //TODO Maybe some optimization
   if (
     changeX + x < aiBoard.length &&
     changeY + y < aiBoard[0].length &&
