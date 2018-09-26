@@ -1,4 +1,5 @@
 var click = require("./../GameLogic/GameClick.js");
+var surround = require("./CheckSurrounding.js")
 
 //Each Cell Looks like this [number,probibility, bomb, foundBombAround]
 var aiBoard = [];
@@ -145,7 +146,7 @@ function findProbiblity(x, y) {
   return tempProbs;
 }
 
-function checkForKnownBombsAround() {}
+
 
 function checkSurroundingCells(x, y) {
   var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

@@ -4,6 +4,7 @@
 //F is flag
 //B is bomb
 //[] is a number and that is how many arround is a mine
+
 var data = []
 var bomb = "B"
 var flag = "F"

@@ -31,6 +31,7 @@ class MineTile extends Component {
     return (<div>
       <button style={{
           backgroundColor: this.state.value
+
         }} className="Box-size" onClick={this.handleClick}>{this.props.data[1] && <p>{this.props.data[0]}</p>}
         {this.props.data[2] === "F" && !this.props.data[1] && <p>{this.props.data[2]}</p>}
       </button>

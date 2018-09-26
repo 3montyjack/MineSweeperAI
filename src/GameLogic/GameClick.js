@@ -5,14 +5,14 @@ var board = []
 //Returns the board in one array with the win and loss in other spaces in the Array
 //[gameBoard, win, loss] and win and loss are booleans
 
-this.clickSpace = function(y, x, gameBoard, flagging) {
+this.clickSpace = function(x, y, gameBoard, flagging) {
   var win = false;
   var lose = false;
   board = gameBoard;
   var revealed0 = false;
 
   if (!flagging) {
-    console.log(y,x)
+    console.log(x,y)
     if (board[y][x][0] === 0) {
       reveal0s(y, x)
       revealed0 = true;

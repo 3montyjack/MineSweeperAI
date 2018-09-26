@@ -95,7 +95,7 @@ class GameArea extends Component {
 
   render() {
     var size = 0;
-    var x = -1;
+    var y = -1;
 
     return (<div>
       <button onClick={this.handleClick}>
@@ -112,11 +112,11 @@ class GameArea extends Component {
         <tbody>
           {
             this.state.gameBoard != null && this.state.gameBoard.map(i => {
-              var y = -1;
-              x++;
+              var x = -1;
+              y++;
               return (<tr>{
                   i.map(j => {
-                    y++;
+                    x++;
                     size++;
                     return (<td><Tile key={size} data={j} refresh={this.revealTile} ai={this.state.aiBoard} x={x} y={y}/></td>);
                   })
