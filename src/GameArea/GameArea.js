@@ -1,10 +1,10 @@
 import React, {Component} from "react";
 import Generate from './../GameLogic/GenerateMap.js';
 import Tile from './../MineSweaperTile/MineSweeperTile.js';
-import ClickBoard from './../GameLogic/GameClick.js';
+import { clickSpace } from './../GameLogic/GameClick.js';
 import GameState from './../GameLogic/Winning.js';
+import {initialize} from "./../TheAI/TheAI.js";
 var AIMakeMove = require("./../TheAI/TheAI.js").makeMove;
-var AIInit = require("./../TheAI/TheAI.js").initialize;
 
 class GameArea extends Component {
   constructor(props) {
@@ -48,7 +48,6 @@ class GameArea extends Component {
     })
   }
 
-
   moveAI() {
     console.log("Making a Move");
     var gameState = AIMakeMove(this.state.gameBoard, this.state.aiBoard, this.state.clicked);
@@ -69,7 +68,7 @@ class GameArea extends Component {
   }
 
   revealTile = (x, y) => {
-    var gameState = ClickBoard.clickSpace(x, y, this.state.gameBoard, this.state.toggleFlag)
+    var gameState = clickSpace(x, y, this.state.gameBoard, this.state.toggleFlag)
     this.setState({
       gameBoard: gameState[0],
       win: gameState[1],
@@ -92,7 +91,6 @@ class GameArea extends Component {
 
   componentDidMount() {
     this.handleClick();
-    AIInit();
   }
 
   render() {
