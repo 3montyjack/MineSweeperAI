@@ -1,5 +1,5 @@
 # MineSweeperAI
-Light Weight WebBased Minesweeper with an AI built into it to solve the problem
+Lightweight WebBased Minesweeper with an AI built into it to solve the problem
 
 ## Installation  
 1. Clone repository  
