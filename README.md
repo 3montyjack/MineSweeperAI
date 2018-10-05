@@ -13,10 +13,14 @@ Front-End Server
 2. `npm start`  
 3. To look at the webpage that is run, go to localhost:3000, or follow the instructions on your command prompt. 
 
+## Finished
+ - AI
+ - Game
 
 ## TODO
 
-- Fix the half working AI
-- Redo the generate Map to make it more intuative
-  - X and Y are logically flipped
-  - Some problem with the objects in the enclosing array of the map
+- Optimize the AI
+- Fix up the two diffrent maps/maybe use just one object layout
+- Finish Solve
+- Fix Up all the //TODO comments
+- Comment all of the code
