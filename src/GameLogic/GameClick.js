@@ -10,6 +10,7 @@ export function clickSpace(x, y, gameBoard, flagging) {
   var lose = false;
   board = gameBoard;
   var revealed0 = false;
+  console.log("Flag State: ", flagging)
   if (board.get(x, y).getHidden()) {
     if (!flagging) {
       reveal(board, x, y);
@@ -21,7 +22,7 @@ export function clickSpace(x, y, gameBoard, flagging) {
       board.get(x, y).setFlag(true);
     }
   }
-  console.log(win, lose);
+  console.log("Win, Lose: " ,win, lose);
   return [board, win, lose, revealed0];
 }
 

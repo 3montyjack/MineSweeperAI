@@ -31,7 +31,7 @@ class MineTile extends Component {
   }
 
   render() {
-    //TODO This is broken the first part of the second line is bad on the button state is bad
+    //TODO Implement Changed Tiles based on AI Clicking them
     return (<div>
       <button style={{
           backgroundColor: this.state.value

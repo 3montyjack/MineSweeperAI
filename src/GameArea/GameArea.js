@@ -121,6 +121,7 @@ class GameArea extends Component {
           }
         </tbody>
       </table>
+      <p></p>
     </div>);
   }
 }

@@ -101,7 +101,7 @@ function click0s() {
 }
 
 function callClick(cords, flagging) {
-  var temp = clickSpace(cords[0], cords[1], actualBoard, false);
+  var temp = clickSpace(cords[0], cords[1], actualBoard, flagging);
 
   actualBoard = temp[0];
   win = temp[1];
@@ -109,11 +109,11 @@ function callClick(cords, flagging) {
   // revealed0 = temp[3]; //TODO Figure out if this is needed
 }
 
-function clickCordsAI(cords, flagging) {
+function clickCordsAI(cords, flug) {
   var k = 0;
   while (cords[k] !== init.termination && k < 9) {
     console.log("(Flag/Click)ing: ", cords[k][0], cords[k][1]);
-    callClick(cords[k], flagging);
+    callClick(cords[k], flug);
     k++;
   }
 }
