@@ -10,15 +10,19 @@ class MineTile extends Component {
   }
 
   handleClick() {
-    this.props.refresh(this.props.x, this.props.y, this.props.gameBoard)
-    console.log(this.props.x, this.props.y)
+    this.props.revealTile(this.props.data.getX(), this.props.data.getY(), this.props.gameBoard)
+    console.log(this.props.data.getDescription(), this.props.data.getX(), this.props.data.getY())
+  }
+
+  handleData() {
+
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.ai !== null) {
       if (this.props.userID !== prevProps.userID) {
         this.setState({
-          value: this.props.ai[this.props.x][this.props.y][2]
+          value: this.props.ai[this.props.data.getX()][this.props.data.getY()]
             ? ""
             : "red"
         })
@@ -27,13 +31,13 @@ class MineTile extends Component {
   }
 
   render() {
-
+    //TODO This is broken the first part of the second line is bad on the button state is bad
     return (<div>
       <button style={{
           backgroundColor: this.state.value
 
-        }} className="Box-size" onClick={this.handleClick}>{this.props.data[1] && <p>{this.props.data[0]}</p>}
-        {this.props.data[2] === "F" && !this.props.data[1] && <p>{this.props.data[2]}</p>}
+        }} className="Box-size" onClick={this.handleClick}>{this.props.data.getRevealed() && <p>{this.props.data.getValue()}</p>}
+        {this.props.data.getFlaged() && !this.props.data.getRevealed() && <p>F</p>}
       </button>
     </div>);
   }

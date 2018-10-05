@@ -1,100 +1,22 @@
-import {bombShiftAll, clickTilesForObvious0 } from "./ChangeDataInMap.js"
-import { Cell } from "./Cell.js";
+import {
+  bombShiftAll,
+  clickTilesForObvious0,
+  checkBombOverCount
+} from "./ChangeDataInMap.js";
+import { AICell } from "./Cell.js";
 import { checkSurroundingCells } from "./CheckSurrounding.js";
 import { clickSpace } from "./../GameLogic/GameClick.js";
-import { states } from "./../Enums.js";
-import { foundBomb } from "./ChangeDataInMap.js"; //Temporary Import for testing
-
-var click = require("./../GameLogic/GameClick.js");
+import { init, states } from "./../Enums.js";
+import { Table } from "./../GameLogic/GameBoard.js";
+import { assignNumber } from "./../GameLogic/GenerateMap.js"; //TODO Remove this after done testing ai
 
 var lose = false;
 var win = false;
-
 
 //Each Cell looks like
 var actualBoard = [];
 //Each Cell Looks like this [number,probibility, bomb, foundBombAround]
 var aiBoard = [];
-
-export function hardInitialize(gameBoardV) {
-  //TODO Make a better way to pass variables between all of the other stuff
-  console.log("ReInitalizing Map");
-  actualBoard = gameBoardV;
-  makeAIBoard();
-}
-
-function makeAIBoard() {
-  aiBoard = JSON.parse(JSON.stringify(actualBoard));
-  //Each Cell Looks like this [number,probibility, bomb, foundBombAround]
-  aiBoard.forEach(function(childArray, x) {
-    childArray.forEach(function(value, y) {
-      if (!value[1]) {
-        //Not Revealed
-        aiBoard[x][y] = new Cell(x,y);
-      } else {
-        //Revealed
-        var temp = aiBoard[x][y][0];
-        aiBoard[x][y] = new Cell(x,y);
-        aiBoard[x][y].setValue(temp) //Plaving Value in aiBoardCell
-      }
-    });
-  });
-}
-
-//New algorythim
-
-function solve() {
-  //clickOne till done
-}
-
-function checkBombOverCount() {
-  //This is going to check every tile to see if the number of unrevealed tiles is equal to the number bombShifted
-  //If it is then it will return the location(s) of the bombShifted
-  //Need to check to see if x and y are right
-  aiBoard.forEach(function(data, x) {
-    data.forEach(function(tile, y) {
-      var cellsArround = checkSurroundingCells(y, x);
-      if (cellsArround[states.bombL] === cellsArround[states.unknown]) {
-        return x,y;
-      }
-    })
-  })
-
-}
-// Checks all the tiles for a tile with undiscovered tiles around
-// that has its value-discoveredBombs = 0
-//NOTE Finished And working I Think
-function click0s() {
-
-  var cords = clickTilesForObvious0();
-  if (cords === null) {
-    return false;
-  }
-  console.log("Te He")
-  var tempBoard = actualBoard;
-  var k = 0;
-  while (cords[k] !== null) {
-    console.log(cords, tempBoard);
-    var tempBoard = clickSpace(cords[k][0],cords[k][1], tempBoard, false)[0];
-    k++;
-  }
-  hardInitialize(tempBoard);
-  //return [board, win, lose, revealed0];
-  return true;
-
-}
-
-function click0sAround() {
-  //for each tile in the program go and click it if the bombshifted ammount is 0
-}
-
-function biasedRandomClick() {
-  //Check for tiles where you have the least ammount of chance of failure
-}
-
-function markAroundAsBombs() {
-  //Mark all of the undiscovered tiles around a tile as a bomb
-}
 
 /*Here is how the algorythim is going to work
 
@@ -121,28 +43,106 @@ Non first Click
 
 */
 
+export function hardInitialize(gameBoardV) {
+  //TODO Make a better way to pass variables between all of the other stuff
+  console.log("ReInitalizing Map");
+  actualBoard = gameBoardV;
+  makeAIBoard();
+  bombShiftAll();
+}
+
+function makeAIBoard() {
+  aiBoard = JSON.parse(JSON.stringify(actualBoard.getBoard()));
+  //Each Cell Looks like this [number,probibility, bomb, foundBombAround]
+  for (var x = 0; x < aiBoard.length; x++) {
+    for (var y = 0; y < aiBoard[x].length; y++) {
+      if (actualBoard.get(x, y).getHidden()) {
+        //Not Revealed
+        aiBoard[x][y] = new AICell(x, y);
+        if (actualBoard.get(x, y).getFlaged()) {
+          aiBoard[x][y].setValue(states.flag);
+          // console.log("Loading: ",x,y,states.flag)
+        } else {
+          // console.log ("Loading: ",x,y,states.undiscovered)
+        }
+      } else {
+        //Revealed
+        var temp = actualBoard.get(x, y).getValue();
+        aiBoard[x][y] = new AICell(x, y);
+        // console.log("Loading: ",x,y,temp)
+        aiBoard[x][y].setValue(temp); //Plaving Value in aiBoardCell
+      }
+    }
+  }
+}
+
+//New algorythim
+
+function solve() {
+  //clickOne till done
+}
+
+// Checks all the tiles for a tile with undiscovered tiles around
+// that has its value-discoveredBombs = 0
+//NOTE Finished And working I Think
+function click0s() {
+  var cords = clickTilesForObvious0();
+  console.log("Clicking0's: ", cords);
+  console.log(cords);
+  if (cords[0] === init.termination) {
+    return false;
+  } else {
+    console.log(Array.isArray(cords));
+    clickCordsAI(cords, false);
+    hardInitialize(actualBoard);
+    //return [board, win, lose, revealed0];
+    return true;
+  }
+}
+
+function callClick(cords, flagging) {
+  var temp = clickSpace(cords[0], cords[1], actualBoard, false);
+
+  actualBoard = temp[0];
+  win = temp[1];
+  lose = temp[2];
+  // revealed0 = temp[3]; //TODO Figure out if this is needed
+}
+
+function clickCordsAI(cords, flagging) {
+  var k = 0;
+  while (cords[k] !== init.termination && k < 9) {
+    console.log("(Flag/Click)ing: ", cords[k][0], cords[k][1]);
+    callClick(cords[k], flagging);
+    k++;
+  }
+}
+
+function biasedRandomClick() {
+  //Check for tiles where you have the least ammount of chance of failure
+  var mineY = Math.floor(Math.random() * aiBoard[0].length);
+  var mineX = Math.floor(Math.random() * aiBoard.length);
+
+  var failedTries = 0;
+
+  while (!aiBoard[mineX][mineY].getUnknown() && failedTries < 10000) {
+    mineY = Math.floor(Math.random() * aiBoard[0].length);
+    mineX = Math.floor(Math.random() * aiBoard.length);
+    failedTries++;
+  }
+
+callClick([mineX, mineY], false);
+
+  console.log("Failed Tries: ", failedTries);
+}
+
 export function getAiBoard() {
   return aiBoard;
 }
 
 export function clickOne() {
-  //For testing Purposes we are going to override the input failedTries
-  //Disabled Win condtition for this with Winning.js
-  actualBoard = [[
-    [0, false, states.notFlag],
-    [1, false, states.notFlag],
-    ["B", false, states.notFlag]],
-    [[0, false, states.notFlag],
-    [1, true, states.notFlag],
-    [1, true, states.notFlag]],
-    [[0, true, states.notFlag],
-    [0, true, states.notFlag],
-    [0, true, states.notFlag]]
-  ];
-
-  console.log(actualBoard)
-
-  makeAIBoard(); //Make the gameboard into an ai readable borard
+  hardInitialize(actualBoard);
+  //Make the gameboard into an ai readable borard
   //FigureOut if first click
 
   //check all tiles and bombshift all squares
@@ -153,22 +153,22 @@ export function clickOne() {
   //Else BiasedRandomly click a tile
 
   if (!click0s()) {
-    if (checkBombOverCount()) {
-      console.log("Marking Bomb")
-      markAroundAsBombs();
-    } else {
-      console.log("Making Biased Click")
+    console.log("Marking Bomb");
+    var cords = checkBombOverCount();
+    console.log("CheckingBombOver: ", cords);
+    if (cords[0] === init.termination) {
+      console.log("Making Biased Click");
       biasedRandomClick();
+    } else {
+      clickCordsAI(cords, true);
+      hardInitialize(actualBoard);
     }
   } else {
-    console.log("Clicked A 0")
+    console.log("Clicked A 0");
   }
-  console.log("Calling Found Bomb")
-
 }
 
 export function makeMove(tempBoard, aiBoardI, clicked) {
-
   if (aiBoardI === null || clicked) {
     hardInitialize(tempBoard);
   } else {
@@ -180,18 +180,19 @@ export function makeMove(tempBoard, aiBoardI, clicked) {
   var temp = [];
 
   temp[0] = actualBoard;
-  //TODO renable win condition
+  //TODO renable win condition ?? Wait what does this mean
   temp[1] = win;
   temp[2] = lose;
   temp[3] = aiBoard;
   return temp;
 }
 
-export function displayAll(identifier,board) {
-  console.log(identifier, board)
-  board.forEach(function(row, i) {
-    row.forEach(function(cell, j) {
-      console.log(cell.getDescription())
-    })
-  })
+// eslint-disable-next-line
+export function displayAll(identifier, board) {
+  console.log(identifier, board);
+  for (var i = 0; i < aiBoard.length; i++) {
+    for (var j = 0; j < aiBoard[i].length; j++) {
+      console.log(aiBoard[i][j].getDescription());
+    }
+  }
 }

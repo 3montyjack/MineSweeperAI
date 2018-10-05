@@ -1,24 +1,6 @@
-import {
-  getAiBoard
-} from "./TheAI.js";
-import {
-  location,
-  states
-} from "./../Enums.js";
+import { getAiBoard } from "./TheAI.js";
+import { location } from "./../Enums.js";
 
-
-function checkConfirmingBomb(x, y) {
-  var data = checkSurroundingCells(x, y);
-  //SUDO Code Temp
-  // if (data[missing] == AI Map bombshifted) {
-  //
-  //   for(var value in square) {
-  //     click on unexposed squares
-  //  }
-  //   startOver()
-  // }
-  //
-};
 
 export function checkIfOB(x, y, changeX, changeY) {
   //TODO Maybe some optimization
@@ -38,11 +20,11 @@ export function checkIfOB(x, y, changeX, changeY) {
 
 export function checkSurroundingCells(x, y) {
   var aiBoard = getAiBoard();
+
   //TODO Fix This Still
   var data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   for (var k = -1; k < 2; k++) {
     for (var l = -1; l < 2; l++) {
-
       if (!(l === 0 && k === 0)) {
         if (!checkIfOB(x, y, k, l)) {
           data[location.walls]++;
@@ -60,7 +42,6 @@ export function checkSurroundingCells(x, y) {
       }
     }
   }
-  console.log(data)
   return data;
 };
 
