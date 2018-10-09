@@ -45,6 +45,49 @@ export function checkSurroundingCells(x, y) {
   return data;
 };
 
+function dataSurrounding(xT,yT) {
+  var x = xT;
+  var y = yT;
+  var bombsAround = 0;
+  var missing = 0;
+  var walls = 0;
+  var values = [0,0,0,0,0,0,0,0,0]
+  this.getX = function () {
+    return x;
+  }
+  this.getY = function () {
+    return y;
+  }
+  this.incrementBombsAround = function () {
+    bombsAround++;
+  }
+  this.incrementMissing = function () {
+    missing++;
+  }
+  this.incrementValue = function (value) {
+    if (value >= 0 && value < 9){
+      values[value]++;
+    } throw Error();
+  }
+  this.incrementWalls = function () {
+    walls++;
+  }
+
+  this.getBombsAround = function () {
+    return bombsAround;
+  }
+
+  this.getMissing = function () {
+    return missing;
+  }
+
+  this.getValue = function (value) {
+    if (value >= 0 && value < 9){
+      return values[value];
+    } throw Error();
+  }
+}
+
 function checkOneDiagonalyCorner(x, y, changeX, changeY) {
   var aiBoard = getAiBoard();
   //TODO Fix This Still

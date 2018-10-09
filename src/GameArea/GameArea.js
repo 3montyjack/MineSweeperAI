@@ -9,8 +9,8 @@ class GameArea extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      gamesizeX: 11,
-      gamesizeY: 10,
+      gamesizeX: 10,
+      gamesizeY: 9,
       gameFlags: 10,
       toggleFlag: false,
       lose: false,
