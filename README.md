@@ -11,7 +11,7 @@ All instructions assume initial start at root of repository.
 Front-End Server  
 1. `npm update`  
 2. `npm start`  
-3. To look at the webpage that is run, go to localhost:3000, or follow the instructions on your command prompt. 
+3. To look at the web page that is run, go to localhost:3000, or follow the instructions on your command prompt. 
 
 ## Finished
  - AI
@@ -20,7 +20,7 @@ Front-End Server
 ## TODO
 
 - Optimize the AI
-- Fix up the two diffrent maps/maybe use just one object layout
+- Fix up the two different maps/maybe use just one object layout
 - Finish Solve
 - Fix Up all the //TODO comments
 - Comment all of the code
