@@ -4,7 +4,7 @@ import {
   checkBombOverCount
 } from "./ChangeDataInMap.js";
 import { AICell } from "./Cell.js";
-import { checkSurroundingCells } from "./CheckSurrounding.js";
+import { checkSurroundingCells, checkIfOB } from "./CheckSurrounding.js";
 import { clickSpace } from "./../GameLogic/GameClick.js";
 import { init, states } from "./../Enums.js";
 import { Table } from "./../GameLogic/GameBoard.js";
@@ -144,19 +144,29 @@ function biasedRandomClick() {
       }
     }
   }
-  console.log(list);
+  console.log("The List:", list);
+
+  var failedTries = 0;
+
   if (list.length > 0) {
     var randonInList = Math.floor(Math.random() * list.length);
 
     var cords = list[randonInList];
-
-    
-
+    var clicked = false;
+    while (!clicked) {
+      var mineY = Math.floor(Math.random() * 3) - 1;
+      var mineX = Math.floor(Math.random() * 3) - 1;
+      console.log(mineX, mineY, aiBoard);
+      if (checkIfOB(cords[0], cords[1], mineX, mineY) && aiBoard[cords[0] + mineX][cords[1] + mineY].getUnknown()) {
+        clicked = true;
+        callClick([cords[0] + mineX, cords[1] + mineY], false);
+      } else {
+        failedTries++;
+      }
+    }
   } else {
     var mineY = Math.floor(Math.random() * aiBoard[0].length);
     var mineX = Math.floor(Math.random() * aiBoard.length);
-
-    var failedTries = 0;
 
     while (!aiBoard[mineX][mineY].getUnknown() && failedTries < 10000) {
       mineY = Math.floor(Math.random() * aiBoard[0].length);
@@ -205,6 +215,7 @@ export function clickOne() {
   } else {
     console.log("Clicked A 0");
   }
+  hardInitialize(actualBoard);
 }
 
 export function makeMove(tempBoard, aiBoardI, clicked) {

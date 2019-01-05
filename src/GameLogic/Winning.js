@@ -19,7 +19,6 @@ this.winning = function(gameBoard) {
 this.lose = function(gameBoard) {
   for (var i = 0; i < gameBoard.getX(); i++) {
     for (var j = 0; j < gameBoard.getY(); j++) {
-      console.log("Hit Here")
       if (
         gameBoard.get(i, j).getBomb() &&
         gameBoard.get(i, j).getRevealed()

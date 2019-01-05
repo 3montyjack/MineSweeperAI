@@ -26,16 +26,14 @@ export function checkBombOverCount() {
 
   for (var x = 0; x < aiBoard.length; x++) {
     for (var y = 0; y < aiBoard[x].length; y++) {
-      console.log("FindingBomb: ", x,y,aiBoard[x][y].getUnknown(), aiBoard[x][y].getFlag())
+      // console.log("FindingBomb: ", x,y,aiBoard[x][y].getUnknown(), aiBoard[x][y].getFlag())
       if (!aiBoard[x][y].getUnknown() && !aiBoard[x][y].getFlag()) {
         var cellsArround = checkSurroundingCells(x, y);
 
-        console.log(x,y, aiBoard[x][y].getUnknown(), aiBoard[x][y].getFlag(), cellsArround)
-        var totalUnsure = cellsArround[location.bombL] + cellsArround[location.missing];
-        var matching = cellsArround[location.bombL] === cellsArround[location.missing];
-        if ((cellsArround[location.missing] > 0) && totalUnsure !== 0 && aiBoard[x][y].getValue() === totalUnsure - cellsArround[location.walls]
-        ) {
-
+        var totalUnsure = cellsArround.getBombsAround() + cellsArround.getMissing();
+        console.log("Here 100", x,y,totalUnsure, cellsArround)
+        var matching = cellsArround.getBombsAround() === cellsArround.getMissing();
+        if ((cellsArround.getMissing() > 0) && totalUnsure !== 0 && aiBoard[x][y].getValue() === totalUnsure - cellsArround.getWalls()) {
           return clickSurrounding (x,y);
         }
       }
@@ -113,7 +111,7 @@ export function clickTilesForObvious0() {
       var temp = aiBoard[i][j];
       // console.log("Obvo's: ", i,j, temp.getDescription())
       if (temp.getBombCount() === temp.getValue()) {
-        var temp2 = checkSurroundingCells(i, j)[location.missing];
+        var temp2 = checkSurroundingCells(i, j).getMissing();
         if (temp2 > 0) {
           console.log("Found Obvious: " + i + ", " + j);
           return clickSurrounding(i,j);
