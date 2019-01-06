@@ -4,11 +4,12 @@ import {
   checkBombOverCount
 } from "./ChangeDataInMap.js";
 import { AICell } from "./Cell.js";
-import { checkSurroundingCells } from "./CheckSurrounding.js";
+import { checkSurroundingCells, checkIfOB } from "./CheckSurrounding.js";
 import { clickSpace } from "./../GameLogic/GameClick.js";
 import { init, states } from "./../Enums.js";
 import { Table } from "./../GameLogic/GameBoard.js";
 import { assignNumber } from "./../GameLogic/GenerateMap.js"; //TODO Remove this after done testing ai
+import { findProbibilityClickingBomb } from "./Calculations.js";
 
 var lose = false;
 var win = false;
@@ -120,18 +121,66 @@ function clickCordsAI(cords, flug) {
 
 function biasedRandomClick() {
   //Check for tiles where you have the least ammount of chance of failure
-  var mineY = Math.floor(Math.random() * aiBoard[0].length);
-  var mineX = Math.floor(Math.random() * aiBoard.length);
+
+  //TODO figure out this condition
+
+  var currentProbs = 1;
+  var list = [];
+  for (var x = 0; x < aiBoard.length; x++) {
+    for (var y = 0; y < aiBoard[x].length; y++) {
+      //TODO Optimize this call
+      var tempProbs = findProbibilityClickingBomb(
+        x,
+        y,
+        aiBoard[x][y].getValue()
+      );
+      if (tempProbs !== null) {
+        if (tempProbs === currentProbs) {
+          list.push([x, y]);
+        } else if (tempProbs < currentProbs) {
+          list = [[x, y]];
+          currentProbs = tempProbs;
+        }
+      }
+    }
+  }
+  console.log("The List:", list);
 
   var failedTries = 0;
 
-  while (!aiBoard[mineX][mineY].getUnknown() && failedTries < 10000) {
-    mineY = Math.floor(Math.random() * aiBoard[0].length);
-    mineX = Math.floor(Math.random() * aiBoard.length);
-    failedTries++;
+  if (list.length > 0) {
+    var randonInList = Math.floor(Math.random() * list.length);
+
+    var cords = list[randonInList];
+    var clicked = false;
+    while (!clicked) {
+      var mineY = Math.floor(Math.random() * 3) - 1;
+      var mineX = Math.floor(Math.random() * 3) - 1;
+      console.log(mineX, mineY, aiBoard);
+      if (checkIfOB(cords[0], cords[1], mineX, mineY) && aiBoard[cords[0] + mineX][cords[1] + mineY].getUnknown()) {
+        clicked = true;
+        callClick([cords[0] + mineX, cords[1] + mineY], false);
+      } else {
+        failedTries++;
+      }
+    }
+  } else {
+    var mineY = Math.floor(Math.random() * aiBoard[0].length);
+    var mineX = Math.floor(Math.random() * aiBoard.length);
+
+    while (!aiBoard[mineX][mineY].getUnknown() && failedTries < 10000) {
+      mineY = Math.floor(Math.random() * aiBoard[0].length);
+      mineX = Math.floor(Math.random() * aiBoard.length);
+      failedTries++;
+    }
+    callClick([mineX, mineY], false);
   }
 
-callClick([mineX, mineY], false);
+  // Check how many unclicked tiles there are arround
+  // Check BombShefted ammount
+  // Store array of lowest ods cords
+  // if greater / less odds discovered then start new list with probibility
+  // click random one from list
 
   console.log("Failed Tries: ", failedTries);
 }
@@ -166,6 +215,7 @@ export function clickOne() {
   } else {
     console.log("Clicked A 0");
   }
+  hardInitialize(actualBoard);
 }
 
 export function makeMove(tempBoard, aiBoardI, clicked) {
@@ -190,9 +240,10 @@ export function makeMove(tempBoard, aiBoardI, clicked) {
 // eslint-disable-next-line
 export function displayAll(identifier, board) {
   console.log(identifier, board);
-  for (var i = 0; i < aiBoard.length; i++) {
-    for (var j = 0; j < aiBoard[i].length; j++) {
-      console.log(aiBoard[i][j].getDescription());
-    }
-  }
+  // for (var i = 0; i < aiBoard.length; i++) {
+  //   for (var j = 0; j < aiBoard[i].length; j++) {
+  //     console.log(aiBoard[i][j].getDescription());
+  //   }
+  // }
+  console.log(identifier, JSON.stringify(board));
 }
