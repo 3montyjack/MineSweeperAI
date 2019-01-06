@@ -95,7 +95,7 @@ class GameArea extends Component {
     var size = 0;
 
     return (<div>
-      <h1>The MineSweaper App</h1>
+      <h1>The MineSweeper App</h1>
       <div></div>
       <div>
         <button className="btn btn-danger" onClick={this.generateMap}>
