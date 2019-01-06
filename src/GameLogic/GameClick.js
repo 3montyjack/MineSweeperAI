@@ -17,9 +17,12 @@ export function clickSpace(x, y, gameBoard, flagging) {
       revealed0 = true;
       lose = gameState.lose(gameBoard);
       win = gameState.winning(gameBoard);
-    } else {
+    } else if (!board.get(x,y).getFlaged()){
       console.log("Flagging");
       board.get(x, y).setFlag(true);
+    } else {
+      console.log("Un-Flagging");
+      board.get(x, y).setFlag(false);
     }
   }
   console.log("Win, Lose: " ,win, lose);

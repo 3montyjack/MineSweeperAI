@@ -1,9 +1,8 @@
 import React, {Component} from "react";
-import { getMap } from './../GameLogic/GenerateMap.js';
+import {getMap} from './../GameLogic/GenerateMap.js';
 import Tile from './../MineSweaperTile/MineSweeperTile.js';
-import { clickSpace } from './../GameLogic/GameClick.js';
-import { makeMove} from "./../TheAI/TheAI.js";
-
+import {clickSpace} from './../GameLogic/GameClick.js';
+import {makeMove} from "./../TheAI/TheAI.js";
 
 class GameArea extends Component {
   constructor(props) {
@@ -41,7 +40,7 @@ class GameArea extends Component {
     })
     console.log(this.state.toggleFlag)
     this.setState({
-      toggleName: this.state.toggleFlag
+      toggleName: !this.state.toggleFlag
         ? 'Flagging'
         : 'Flag'
     })
@@ -96,24 +95,28 @@ class GameArea extends Component {
     var size = 0;
 
     return (<div>
-      <button onClick={this.generateMap}>
-        Generate Map
-      </button>
-      <button onClick={this.handleFlag}>
-        {this.state.toggleName}
-      </button>
-      <button onClick={this.moveAI}>
-        Move AI
-      </button>
+      <h1>The MineSweaper App</h1>
       <div></div>
-      <table id="simple-board">
-        <tbody>
+      <div>
+        <button className="btn btn-danger" onClick={this.generateMap}>
+          Generate Map
+        </button>
+        <button className="btn btn-warning" onClick={this.handleFlag}>
+          {this.state.toggleName}
+        </button>
+        <button className="btn btn-success" onClick={this.moveAI}>
+          Move AI
+        </button>
+      </div>
+      <p></p>
+      <table id="simple-board" className="centered">
+        <tbody className="boardStuff">
           {
             this.state.gameBoard != null && this.state.gameBoard.getDisplayBoard().map(i => {
               return (<tr key={size}>{
                   i.map(j => {
                     size++;
-                    return (<td key={size}><Tile key={size} data={j} revealTile={this.revealTile} ai={this.state.aiBoard}/></td>);
+                    return (<td key={size}><Tile key={size} data={j} lose={this.state.lose} win={this.state.win} revealTile={this.revealTile} ai={this.state.aiBoard} /></td>);
                   })
                 }
               </tr>)
