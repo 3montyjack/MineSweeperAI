@@ -9,7 +9,7 @@ Lightweight WebBased Minesweeper with an AI built into it to solve the problem
 All instructions assume initial start at root of repository.  
 
 Front-End Server  
-1. `npm update`  
+1. `npm install`  
 2. `npm start`  
 3. To look at the web page that is run, go to localhost:3000, or follow the instructions on your command prompt. 
 
